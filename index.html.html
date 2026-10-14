@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Milepost Car Rental</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Barlow:wght@400;500;600&display=swap">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+--bg:#eef1f0;--surface:#fff;--ink:#14262b;--muted:#5b6b70;--line:#d3dbd9;--road:#12343b;--road-ink:#f3f5f4;--sign:#f2a900;--sign-ink:#1b1400;--ok:#1d7a4f}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark;--bg:#0e1a1d;--surface:#16272b;--ink:#e8eeed;--muted:#93a5a9;--line:#27393d;--road:#0a2329;--road-ink:#f3f5f4}}
+:root[data-theme="dark"]{color-scheme:dark;--bg:#0e1a1d;--surface:#16272b;--ink:#e8eeed;--muted:#93a5a9;--line:#27393d;--road:#0a2329;--road-ink:#f3f5f4}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*:before,*:after{box-sizing:inherit}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 Barlow,system-ui,sans-serif}
+h1,h2,h3{font-family:"Barlow Condensed",Impact,sans-serif;margin:0;letter-spacing:.01em}
+button,input,select{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--sign);outline-offset:2px}
+header{background:var(--road);color:var(--road-ink);padding:28px 20px 24px;border-bottom:6px solid var(--sign)}
+.wrap{max-width:1080px;margin:0 auto}
+.bar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.logo{font:700 28px "Barlow Condensed",sans-serif}
+nav{display:flex;gap:8px}
+nav button{background:transparent;border:1px solid #ffffff55;color:var(--road-ink);padding:6px 14px;border-radius:6px;cursor:pointer}
+nav button[aria-pressed=true]{background:var(--sign);border-color:var(--sign);color:var(--sign-ink);font-weight:600}
+header h1{font-size:clamp(40px,8vw,72px);line-height:.95;margin:28px 0 8px;max-width:11em}
+header p{margin:0;color:#c5d3d1;max-width:36em}
+main{padding:24px 20px 60px}
+.tools{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px}
+.tools input,.tools select{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:9px 12px;min-width:0}
+.tools input{flex:1 1 200px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:18px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:8px;overflow:hidden;display:flex;flex-direction:column}
+.pic{height:130px;display:grid;place-items:center;background:linear-gradient(var(--bg),var(--line))}
+.pic svg{width:70%;max-width:230px}
+.body{padding:14px 16px 16px;display:flex;flex-direction:column;gap:8px;flex:1}
+.row{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.card h3{font-size:24px}
+.tag{font-size:13px;color:var(--muted)}
+.specs{display:flex;gap:12px;font-size:14px;color:var(--muted);flex-wrap:wrap}
+.price{font:700 28px "Barlow Condensed",sans-serif}
+.price small{font:400 14px Barlow,sans-serif;color:var(--muted)}
+.btn{background:var(--sign);color:var(--sign-ink);border:0;border-radius:6px;padding:9px 16px;font-weight:600;cursor:pointer}
+.btn.alt{background:transparent;color:var(--ink);border:1px solid var(--line)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.pager{display:flex;justify-content:center;align-items:center;gap:6px;margin-top:26px;flex-wrap:wrap}
+.pager button{min-width:38px;padding:7px 10px;background:var(--surface);border:1px solid var(--line);border-radius:6px;cursor:pointer}
+.pager button[aria-current=page]{background:var(--road);color:var(--road-ink);border-color:var(--road)}
+.pager button:disabled{opacity:.4;cursor:default}
+.empty{padding:40px;text-align:center;color:var(--muted)}
+.tablebox{overflow-x:auto;background:var(--surface);border:1px solid var(--line);border-radius:8px}
+table{width:100%;border-collapse:collapse;min-width:620px}
+th,td{text-align:left;padding:10px 14px;border-bottom:1px solid var(--line)}
+th{font-weight:600;color:var(--muted);font-size:14px}
+dialog{border:0;border-radius:10px;padding:0;width:min(520px,calc(100% - 24px));background:var(--surface);color:var(--ink);max-height:92vh}
+dialog::backdrop{background:#000a}
+.dlg{padding:22px;display:grid;gap:12px}
+.dlg h2{font-size:30px}
+label{display:grid;gap:4px;font-size:14px;color:var(--muted)}
+label input,label select{background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:9px 10px;color:var(--ink)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.extras{display:flex;gap:14px;flex-wrap:wrap;font-size:14px}
+.extras label{display:flex;align-items:center;gap:6px;color:var(--ink)}
+.sum{background:var(--bg);border-radius:8px;padding:12px 14px;font-size:15px}
+.sum div{display:flex;justify-content:space-between}
+.sum .tot{font:700 26px "Barlow Condensed",sans-serif;border-top:1px dashed var(--line);margin-top:6px;padding-top:6px}
+.err{color:#c0392b;font-size:14px;min-height:1.2em}
+.actions{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap}
+.receipt{border:1px dashed var(--line);border-radius:8px;padding:14px;font-size:15px}
+.receipt .ok{color:var(--ok);font-weight:600}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <div class="bar"><div class="logo">Milepost Car Rental</div>
+  <nav><button id="tabCars" aria-pressed="true">Cars</button><button id="tabBook" aria-pressed="false">My bookings</button></nav></div>
+  <h1>Pick a car. Pick your dates. Drive.</h1>
+  <p>Transparent daily rates, free cancellation, and a PDF receipt the moment you book.</p>
+</div></header>
+<main><div class="wrap">
+  <section id="carsView">
+    <div class="tools">
+      <input id="q" type="search" placeholder="Search by make or model" aria-label="Search cars">
+      <select id="cat" aria-label="Category"></select>
+      <select id="sort" aria-label="Sort"><option value="p-asc">Price: low to high</option><option value="p-desc">Price: high to low</option><option value="name">Name</option></select>
+    </div>
+    <div id="grid" class="grid"></div>
+    <div id="pager" class="pager"></div>
+  </section>
+  <section id="bookView" hidden>
+    <h2 style="font-size:34px;margin-bottom:14px">My bookings</h2>
+    <div id="bookTable"></div>
+    <div id="bookPager" class="pager"></div>
+  </section>
+</div></main>
+
+<dialog id="dlgBook"><div class="dlg" id="bookForm"></div></dialog>
+<dialog id="dlgDone"><div class="dlg" id="doneBox"></div></dialog>
+
+<script type="application/json" id="carData">
+{"locations":["Bahawalpur City Center","Multan Airport","Lahore Downtown","Islamabad Airport"],
+"extras":[{"id":"gps","name":"GPS","perDay":4},{"id":"seat","name":"Child seat","perDay":5},{"id":"ins","name":"Full insurance","perDay":12}],
+"taxRate":0.08,
+"cars":[
+{"id":1,"name":"Toyota Corolla","category":"Sedan","seats":5,"trans":"Auto","fuel":"Petrol","price":42,"color":"#9fb3b8"},
+{"id":2,"name":"Honda Civic","category":"Sedan","seats":5,"trans":"Auto","fuel":"Petrol","price":46,"color":"#c0392b"},
+{"id":3,"name":"Suzuki Alto","category":"Economy","seats":4,"trans":"Manual","fuel":"Petrol","price":22,"color":"#e8c547"},
+{"id":4,"name":"Suzuki Cultus","category":"Economy","seats":5,"trans":"Manual","fuel":"Petrol","price":26,"color":"#3d7ea6"},
+{"id":5,"name":"Toyota Fortuner","category":"SUV","seats":7,"trans":"Auto","fuel":"Diesel","price":95,"color":"#2b2f36"},
+{"id":6,"name":"Kia Sportage","category":"SUV","seats":5,"trans":"Auto","fuel":"Petrol","price":72,"color":"#d9d9d9"},
+{"id":7,"name":"Hyundai Tucson","category":"SUV","seats":5,"trans":"Auto","fuel":"Petrol","price":70,"color":"#5a6e4f"},
+{"id":8,"name":"Toyota Hiace","category":"Van","seats":12,"trans":"Manual","fuel":"Diesel","price":85,"color":"#f4f4f4"},
+{"id":9,"name":"Honda City","category":"Sedan","seats":5,"trans":"Auto","fuel":"Petrol","price":40,"color":"#7d5ba6"},
+{"id":10,"name":"Mercedes E-Class","category":"Luxury","seats":5,"trans":"Auto","fuel":"Petrol","price":160,"color":"#1b1f24"},
+{"id":11,"name":"BMW 5 Series","category":"Luxury","seats":5,"trans":"Auto","fuel":"Petrol","price":170,"color":"#4a5a78"},
+{"id":12,"name":"Audi A6","category":"Luxury","seats":5,"trans":"Auto","fuel":"Petrol","price":165,"color":"#8c8f94"},
+{"id":13,"name":"Toyota Prado","category":"SUV","seats":7,"trans":"Auto","fuel":"Diesel","price":130,"color":"#e3e0d6"},
+{"id":14,"name":"Suzuki Wagon R","category":"Economy","seats":5,"trans":"Auto","fuel":"Petrol","price":28,"color":"#8bb174"},
+{"id":15,"name":"Nissan Dayz","category":"Economy","seats":4,"trans":"Auto","fuel":"Hybrid","price":30,"color":"#e07a5f"},
+{"id":16,"name":"Toyota Yaris","category":"Sedan","seats":5,"trans":"Auto","fuel":"Petrol","price":38,"color":"#2a9d8f"},
+{"id":17,"name":"MG HS","category":"SUV","seats":5,"trans":"Auto","fuel":"Petrol","price":68,"color":"#b5534a"},
+{"id":18,"name":"Toyota Coaster","category":"Van","seats":22,"trans":"Manual","fuel":"Diesel","price":150,"color":"#dcdcdc"}
+]}
+</script>
+
+<script>
+const DATA = JSON.parse(document.getElementById('carData').textContent);
+const PER_PAGE = 6, BOOK_PER_PAGE = 5;
+const $ = id => document.getElementById(id);
+const money = n => '$' + n.toFixed(2);
+let state = {page:1, bookPage:1, selected:null};
+let bookings = [];
+try { bookings = JSON.parse(localStorage.getItem('milepost-bookings') || '[]'); } catch(e) {}
+const save = () => { try { localStorage.setItem('milepost-bookings', JSON.stringify(bookings)); } catch(e) {} };
+
+const carSvg = c => `<svg viewBox="0 0 200 80" role="img" aria-label="${c.name}"><path d="M10 56 L14 42 Q18 36 30 34 L58 30 Q74 12 100 12 L132 14 Q150 20 160 32 L184 38 Q192 42 192 54 L192 58 L10 58Z" fill="${c.color}" stroke="#0006" stroke-width="1.5"/><path d="M66 32 Q80 18 100 18 L128 20 Q140 24 148 32Z" fill="#cfe6ee" stroke="#0005"/><circle cx="52" cy="58" r="12" fill="#1a1a1a"/><circle cx="52" cy="58" r="5" fill="#bbb"/><circle cx="150" cy="58" r="12" fill="#1a1a1a"/><circle cx="150" cy="58" r="5" fill="#bbb"/></svg>`;
+
+/* categories */
+const cats = ['All', ...new Set(DATA.cars.map(c => c.category))];
+$('cat').innerHTML = cats.map(c => `<option>${c}</option>`).join('');
+
+function filtered(){
+  const q = $('q').value.trim().toLowerCase(), cat = $('cat').value, s = $('sort').value;
+  let list = DATA.cars.filter(c => (cat === 'All' || c.category === cat) && c.name.toLowerCase().includes(q));
+  list.sort((a,b) => s === 'p-asc' ? a.price-b.price : s === 'p-desc' ? b.price-a.price : a.name.localeCompare(b.name));
+  return list;
+}
+
+function pager(el, total, page, per, go){
+  const pages = Math.ceil(total / per);
+  if (pages <= 1) { el.innerHTML = ''; return; }
+  let h = `<button ${page===1?'disabled':''} data-p="${page-1}" aria-label="Previous page">Prev</button>`;
+  for (let i=1;i<=pages;i++) h += `<button data-p="${i}" ${i===page?'aria-current="page"':''}>${i}</button>`;
+  h += `<button ${page===pages?'disabled':''} data-p="${page+1}" aria-label="Next page">Next</button>`;
+  el.innerHTML = h;
+  el.querySelectorAll('button:not(:disabled)').forEach(b => b.onclick = () => go(+b.dataset.p));
+}
+
+function renderCars(){
+  const list = filtered(), max = Math.max(1, Math.ceil(list.length / PER_PAGE));
+  if (state.page > max) state.page = max;
+  const slice = list.slice((state.page-1)*PER_PAGE, state.page*PER_PAGE);
+  $('grid').innerHTML = slice.length ? slice.map(c => `
+    <article class="card"><div class="pic">${carSvg(c)}</div>
+    <div class="body"><div class="row"><h3>${c.name}</h3><span class="tag">${c.category}</span></div>
+    <div class="specs"><span>${c.seats} seats</span><span>${c.trans}</span><span>${c.fuel}</span></div>
+    <div class="row" style="margin-top:auto"><div class="price">${money(c.price)} <small>/ day</small></div>
+    <button class="btn" data-id="${c.id}">Book now</button></div></div></article>`).join('')
+    : '<div class="empty" style="grid-column:1/-1">No cars match your search. Try another name or category.</div>';
+  $('grid').querySelectorAll('.btn').forEach(b => b.onclick = () => openBook(+b.dataset.id));
+  pager($('pager'), list.length, state.page, PER_PAGE, p => { state.page = p; renderCars(); window.scrollTo({top:0,behavior:'smooth'}); });
+}
+['q','cat','sort'].forEach(id => $(id).addEventListener('input', () => { state.page = 1; renderCars(); }));
+
+/* booking */
+const today = () => new Date().toISOString().slice(0,10);
+const addDays = (d,n) => { const x = new Date(d); x.setDate(x.getDate()+n); return x.toISOString().slice(0,10); };
+
+function openBook(id){
+  const c = DATA.cars.find(x => x.id === id); state.selected = c;
+  const locs = DATA.locations.map(l => `<option>${l}</option>`).join('');
+  $('bookForm').innerHTML = `<h2>Book ${c.name}</h2><div class="tag">${money(c.price)} per day · ${c.category}</div>
+  <div class="two"><label>Full name<input id="fName" autocomplete="name"></label><label>Email<input id="fEmail" type="email" autocomplete="email"></label></div>
+  <div class="two"><label>Pickup date<input id="fFrom" type="date" min="${today()}" value="${addDays(today(),1)}"></label>
+  <label>Return date<input id="fTo" type="date" min="${today()}" value="${addDays(today(),4)}"></label></div>
+  <div class="two"><label>Pickup location<select id="fPick">${locs}</select></label><label>Return location<select id="fDrop">${locs}</select></label></div>
+  <div class="extras">${DATA.extras.map(e => `<label><input type="checkbox" class="ex" value="${e.id}">${e.name} (${money(e.perDay)}/day)</label>`).join('')}</div>
+  <div class="sum" id="sum"></div><div class="err" id="err" role="alert"></div>
+  <div class="actions"><button class="btn alt" id="cancel">Cancel</button><button class="btn" id="confirm">Confirm booking</button></div>`;
+  ['fFrom','fTo'].forEach(i => $(i).oninput = calc);
+  document.querySelectorAll('.ex').forEach(e => e.onchange = calc);
+  $('cancel').onclick = () => $('dlgBook').close();
+  $('confirm').onclick = confirmBooking;
+  calc(); $('dlgBook').showModal();
+}
+
+function calc(){
+  const c = state.selected, f = $('fFrom').value, t = $('fTo').value;
+  const days = Math.round((new Date(t) - new Date(f)) / 864e5);
+  const ex = [...document.querySelectorAll('.ex:checked')].map(e => DATA.extras.find(x => x.id === e.value));
+  const base = c.price * Math.max(days,0), exTot = ex.reduce((s,e) => s + e.perDay * Math.max(days,0), 0);
+  const sub = base + exTot, tax = sub * DATA.taxRate, total = sub + tax;
+  const r = {days, ex, base, exTot, sub, tax, total};
+  state.calc = r;
+  $('sum').innerHTML = `<div><span>${days > 0 ? days : 0} day(s) × ${money(c.price)}</span><span>${money(base)}</span></div>
+  <div><span>Extras</span><span>${money(exTot)}</span></div><div><span>Tax (${DATA.taxRate*100}%)</span><span>${money(tax)}</span></div>
+  <div class="tot"><span>Total</span><span>${money(total)}</span></div>`;
+  return r;
+}
+
+function confirmBooking(){
+  const name = $('fName').value.trim(), email = $('fEmail').value.trim(), r = calc();
+  if (name.length < 2) return $('err').textContent = 'Enter your full name.';
+  if (!/^\S+@\S+\.\S+$/.test(email)) return $('err').textContent = 'Enter a valid email address.';
+  if (r.days < 1) return $('err').textContent = 'Return date must be after the pickup date.';
+  const b = {ref:'MP-' + Date.now().toString(36).toUpperCase().slice(-6), created:new Date().toISOString(),
+    name, email, car:state.selected.name, category:state.selected.category, rate:state.selected.price,
+    from:$('fFrom').value, to:$('fTo').value, pick:$('fPick').value, drop:$('fDrop').value,
+    extras:r.ex.map(e => ({name:e.name, perDay:e.perDay})), days:r.days, base:r.base, exTot:r.exTot, tax:r.tax, total:r.total};
+  bookings.unshift(b); save(); state.bookPage = 1;
+  $('dlgBook').close(); showDone(b);
+}
+
+function showDone(b){
+  $('doneBox').innerHTML = `<h2>Booking confirmed</h2><div class="receipt"><div class="ok">Reference ${b.ref}</div>
+  <div>${b.car} · ${b.days} day(s)</div><div>${b.from} to ${b.to}</div><div>Pickup: ${b.pick}</div><div><b>Total ${money(b.total)}</b></div></div>
+  <div class="actions"><button class="btn alt" id="closeDone">Close</button><button class="btn" id="dlPdf">Download receipt (PDF)</button></div>`;
+  $('closeDone').onclick = () => $('dlgDone').close();
+  $('dlPdf').onclick = () => makePdf(b);
+  $('dlgDone').showModal();
+}
+
+/* PDF receipt */
+function makePdf(b){
+  if (!window.jspdf) { alert('The PDF library could not load. Check your connection and try again.'); return; }
+  const doc = new window.jspdf.jsPDF({unit:'mm', format:'a4'});
+  const W = 210, L = 18, R = W - 18;
+  doc.setFillColor(18,52,59); doc.rect(0,0,W,34,'F');
+  doc.setFillColor(242,169,0); doc.rect(0,34,W,2.5,'F');
+  doc.setTextColor(243,245,244); doc.setFont('helvetica','bold'); doc.setFontSize(20); doc.text('Milepost Car Rental', L, 17);
+  doc.setFontSize(10); doc.setFont('helvetica','normal'); doc.text('Car Rental Receipt', L, 25);
+  doc.text('Ref: ' + b.ref, R, 17, {align:'right'}); doc.text('Issued: ' + new Date(b.created).toLocaleString(), R, 25, {align:'right'});
+  doc.setTextColor(20,38,43);
+  let y = 50;
+  const section = t => { doc.setFont('helvetica','bold'); doc.setFontSize(12); doc.text(t, L, y); doc.setDrawColor(200); doc.line(L, y+2, R, y+2); y += 9; };
+  const line = (k, v) => { doc.setFont('helvetica','normal'); doc.setFontSize(10.5); doc.setTextColor(90,107,112); doc.text(k, L, y); doc.setTextColor(20,38,43); doc.text(String(v), L+45, y); y += 7; };
+  section('Customer'); line('Name', b.name); line('Email', b.email); y += 4;
+  section('Rental details'); line('Vehicle', `${b.car} (${b.category})`); line('Pickup', `${b.from} at ${b.pick}`); line('Return', `${b.to} at ${b.drop}`); line('Duration', `${b.days} day(s)`); y += 4;
+  section('Charges');
+  const row = (k, v, bold) => { doc.setFont('helvetica', bold ? 'bold' : 'normal'); doc.setFontSize(bold ? 13 : 10.5); doc.text(k, L, y); doc.text(v, R, y, {align:'right'}); y += bold ? 9 : 7; };
+  row(`Car rental: ${b.days} x ${money(b.rate)}`, money(b.base));
+  b.extras.forEach(e => row(`${e.name}: ${b.days} x ${money(e.perDay)}`, money(e.perDay * b.days)));
+  row('Tax (' + DATA.taxRate*100 + '%)', money(b.tax));
+  doc.setDrawColor(20,38,43); doc.line(L, y-2, R, y-2); y += 4;
+  row('Total paid', money(b.total), true);
+  y += 12; doc.setFont('helvetica','italic'); doc.setFontSize(9); doc.setTextColor(90,107,112);
+  doc.text('Free cancellation up to 24 hours before pickup. Please bring a valid driving licence and this receipt.', L, y);
+  doc.text('Thank you for choosing Milepost Car Rental.', L, y+6);
+  doc.save(`receipt-${b.ref}.pdf`);
+}
+
+/* My bookings (paginated) */
+function renderBookings(){
+  const max = Math.max(1, Math.ceil(bookings.length / BOOK_PER_PAGE));
+  if (state.bookPage > max) state.bookPage = max;
+  const slice = bookings.slice((state.bookPage-1)*BOOK_PER_PAGE, state.bookPage*BOOK_PER_PAGE);
+  $('bookTable').innerHTML = slice.length ? `<div class="tablebox"><table><thead><tr><th>Ref</th><th>Car</th><th>Dates</th><th>Total</th><th>Receipt</th></tr></thead><tbody>${
+    slice.map(b => `<tr><td>${b.ref}</td><td>${b.car}</td><td>${b.from} to ${b.to}</td><td>${money(b.total)}</td><td><button class="btn" data-ref="${b.ref}">PDF</button></td></tr>`).join('')}</tbody></table></div>`
+    : '<div class="empty">No bookings yet. Choose a car to make your first booking.</div>';
+  $('bookTable').querySelectorAll('[data-ref]').forEach(btn => btn.onclick = () => makePdf(bookings.find(x => x.ref === btn.dataset.ref)));
+  pager($('bookPager'), bookings.length, state.bookPage, BOOK_PER_PAGE, p => { state.bookPage = p; renderBookings(); });
+}
+
+function tab(which){
+  const cars = which === 'cars';
+  $('carsView').hidden = !cars; $('bookView').hidden = cars;
+  $('tabCars').setAttribute('aria-pressed', cars); $('tabBook').setAttribute('aria-pressed', !cars);
+  if (!cars) renderBookings();
+}
+$('tabCars').onclick = () => tab('cars'); $('tabBook').onclick = () => tab('book');
+renderCars();
+</script>
+</body>
+</html>
